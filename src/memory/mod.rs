@@ -71,3 +71,49 @@ impl crate::Chip8 {
         self.load_default_font();
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::Chip8;
+    use crate::ChipError;
+
+    #[test]
+    fn write() {
+        let mut c8 = Chip8::default();
+
+        let _ = c8.write(1, 15);
+        assert_eq!(c8.memory[1], 15); 
+
+        let e = c8.write(123456, 2);
+        assert!(matches!(e, Err(ChipError::AddressOutOfBounds(_))));
+    }
+
+    #[test]
+    fn read() {
+        let mut c8 = Chip8::default();
+
+        let val = c8.read(0).unwrap();
+        assert_eq!(val, 0xF0);
+        let val = c8.read(0x200).unwrap();
+        assert_eq!(val, 0);
+
+        c8.memory[0x200] = 0xFF;
+        let val = c8.read(0x200).unwrap();
+        assert_eq!(val, 0xFF);
+
+        let e = c8.read(123456);
+        assert!(matches!(e, Err(ChipError::AddressOutOfBounds(_))));
+    }
+
+    #[test]
+    fn load() {
+        let mut c8 = Chip8::default();
+
+        c8.load(0, &[1, 2, 3, 4, 5]).unwrap();
+        assert_eq!(c8.memory[1], 2);
+        assert_eq!(c8.memory[3], 4);
+
+        let e = c8.load(4091, &[1, 2, 3, 4, 5]);
+        assert!(matches!(e, Err(ChipError::AddressOutOfBounds(_))));
+    }
+}

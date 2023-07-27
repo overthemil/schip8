@@ -7,4 +7,3 @@ pub enum ChipError {
     AddressOutOfBounds(usize)
 }
 
-
