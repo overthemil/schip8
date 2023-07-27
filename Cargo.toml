@@ -1,0 +1,15 @@
+[package]
+name = "schip8"
+version = "0.1.0"
+edition = "2021"
+authors = ["Pedro Alves"]
+description = "Interpreter backend for Chip-8 and Super-Chip"
+readme = "README.md"
+repository = "https://github.com/overthemil/schip8/"
+license = "MIT"
+keywords = ["chip", "chip-8", "interpreter", "emulator"]
+categories = ["emulators"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
