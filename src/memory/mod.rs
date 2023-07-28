@@ -1,6 +1,8 @@
 use crate::errors::ChipError;
 use crate::MEMORY_SIZE;
 
+pub const FONT_BASE_ADDRESS: usize = 0x050;
+
 const FONT: [u8; 80] = [
     0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
     0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -57,7 +59,7 @@ impl crate::Chip8 {
     }
 
     pub fn load_font(&mut self, font: &[u8]) -> Result<(), ChipError> {
-        self.load(self.config.font_base_addr, font)?; 
+        self.load(FONT_BASE_ADDRESS, font)?; 
 
         Ok(())
     }
@@ -74,6 +76,7 @@ impl crate::Chip8 {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::Chip8;
     use crate::ChipError;
 
@@ -92,7 +95,7 @@ mod tests {
     fn read() {
         let mut c8 = Chip8::default();
 
-        let val = c8.read(c8.config.font_base_addr).unwrap();
+        let val = c8.read(FONT_BASE_ADDRESS).unwrap();
         assert_eq!(val, 0xF0);
         let val = c8.read(0x200).unwrap();
         assert_eq!(val, 0);

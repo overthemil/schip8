@@ -17,6 +17,7 @@ pub struct Cpu {
     pub timer_delay: u8,
     pub timer_sound: u8,
     pub stack: [u16; STACK_SIZE],
+    pub keypad: [bool; 16],
 }
 
 impl Cpu {
@@ -25,8 +26,8 @@ impl Cpu {
             return Err(ChipError::StackOverflow(self.stack.len()));
         }
 
-        self.stack[self.sp] = value;
         self.sp += 1;
+        self.stack[self.sp] = value;
 
         Ok(())
     }
@@ -36,8 +37,8 @@ impl Cpu {
             return Err(ChipError::StackUnderflow());
         }
 
-        self.sp -= 1;
         let value = self.stack[self.sp];
+        self.sp -= 1;
 
         Ok(value)
     }
@@ -81,6 +82,7 @@ impl Default for Cpu {
             timer_delay: 0,
             timer_sound: 0,
             stack: [0; STACK_SIZE],
+            keypad: [false; 16],
         }
     }
 }
@@ -95,11 +97,11 @@ mod tests {
         assert_eq!(cpu.stack[cpu.sp], 0);
 
         cpu.push(1).unwrap();
-        assert_eq!(cpu.stack[cpu.sp - 1], 1);
+        assert_eq!(cpu.stack[cpu.sp], 1);
         assert_eq!(cpu.sp, 1);
 
         cpu.push(5).unwrap();
-        assert_eq!(cpu.stack[cpu.sp - 1], 5);
+        assert_eq!(cpu.stack[cpu.sp], 5);
         assert_eq!(cpu.sp, 2);
 
         cpu.sp = 15;

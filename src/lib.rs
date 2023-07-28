@@ -40,6 +40,13 @@ impl Chip8 {
         for _ in 0..self.config.tick_rate {
             self.step()?;
         }
+        
+        if self.cpu.timer_delay > 0 {
+            self.cpu.timer_delay -= 1;
+        }
+        if self.cpu.timer_sound > 0 {
+            self.cpu.timer_sound -= 1;
+        }
 
         Ok(())
     }
