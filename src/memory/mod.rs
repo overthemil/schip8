@@ -92,7 +92,7 @@ mod tests {
     fn read() {
         let mut c8 = Chip8::default();
 
-        let val = c8.read(0).unwrap();
+        let val = c8.read(c8.config.font_base_addr).unwrap();
         assert_eq!(val, 0xF0);
         let val = c8.read(0x200).unwrap();
         assert_eq!(val, 0);
