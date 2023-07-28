@@ -50,7 +50,7 @@ pub fn execute(opcode: Opcode, cpu: &mut Cpu, memory: &mut [u8], screen: &mut Sc
 fn execute_prefix_0(opcode: Opcode, cpu: &mut Cpu, screen: &mut Screen) -> Result<(), ChipError> {
     match opcode.hex {
         0x00E0 => screen.clear_screen(),
-        0x00EE => { cpu.pc = cpu.pop()? as usize }, 
+        0x00EE => cpu.pc = cpu.pop()? as usize,
         _ => () 
     }
 
@@ -86,3 +86,82 @@ fn draw_sprite(opcode: Opcode, cpu: &mut Cpu, memory: &mut [u8], screen: &mut Sc
     Ok(())
 }
 
+#[cfg(test)]
+mod tests {
+    use super::Cpu;
+    use super::Screen;
+    use crate::errors::ChipError;
+
+    #[test]
+    fn opcode_00e0() {
+        let mut cpu = Cpu::default();
+        let mut screen = Screen::default();
+        let mut memory: [u8; 4] = [0x00, 0xe0, 0x00, 0x00];
+        screen.set_pixel(5, 10);
+        screen.set_pixel(50, 30);
+       
+        assert!(screen.get_pixel(5, 10));
+        assert!(screen.get_pixel(50, 30));
+        cpu.step(&mut memory, &mut screen).unwrap();
+        assert!(!screen.get_pixel(5, 10));
+        assert!(!screen.get_pixel(50, 30));
+    }
+
+    #[test]
+    fn opcode_00ee() {
+        let mut cpu = Cpu::default();
+        let mut screen = Screen::default();
+        let mut memory: [u8; 4] = [0x00, 0xee, 0x00, 0x00];
+
+        assert_eq!(cpu.pc, 0);
+        cpu.push(0x01).unwrap();
+        cpu.step(&mut memory, &mut screen).unwrap();
+        assert_eq!(cpu.pc, 0x001);
+
+        cpu.pc = 0x000;
+        let e = cpu.step(&mut memory, &mut screen);
+        assert!(matches!(e, Err(ChipError::StackUnderflow())));
+    }
+
+    #[test]
+    fn opcode_1nnn() {
+        let mut cpu = Cpu::default();
+        let mut screen = Screen::default();
+        let mut memory: [u8; 4] = [0x12, 0x34, 0x00, 0x00];
+
+        cpu.step(&mut memory, &mut screen).unwrap();
+        assert_eq!(cpu.pc, 0x234);
+    }
+
+    #[test]
+    fn opcode_6xnn() {
+        let mut cpu = Cpu::default();
+        let mut screen = Screen::default();
+        let mut memory: [u8; 4] = [0x62, 0xF1, 0x00, 0x00];
+
+        assert_eq!(cpu.v[0x2], 0);
+        cpu.step(&mut memory, &mut screen).unwrap();
+        assert_eq!(cpu.v[0x2], 0xF1);
+    }
+
+    #[test]
+    fn opcode_7xnn() {
+        let mut cpu = Cpu::default();
+        let mut screen = Screen::default();
+        let mut memory: [u8; 4] = [0x75, 0xA1, 0x00, 0x00];
+
+        cpu.v[0x5] = 0x32;
+        cpu.step(&mut memory, &mut screen).unwrap();
+        assert_eq!(cpu.v[0x5], 0xD3);
+    }
+
+    #[test]
+    fn opcode_annn() {
+        let mut cpu = Cpu::default();
+        let mut screen = Screen::default();
+        let mut memory: [u8; 4] = [0xA1, 0x23, 0x00, 0x00];
+
+        cpu.step(&mut memory, &mut screen).unwrap();
+        assert_eq!(cpu.i, 0x123);
+    }
+}
