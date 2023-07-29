@@ -6,7 +6,7 @@ A library with the aim to provide a simple CHIP-8 interpreter backend that can i
 
 # Quickstart
 This is a basic skeleton of how to start implementing a frontend. 
-It's recommended to use the [anyhow] crate as well.
+It's recommended to use the [anyhow](https://crates.io/crates/anyhow/) crate as well.
 ```rust
 use schip8::Chip8; 
 use anyhow::{Context, Result};
