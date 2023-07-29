@@ -23,6 +23,7 @@ const FONT: [u8; 80] = [
 ];
 
 impl crate::Chip8 {
+    /// Write a byte of data to the address specified.
     pub fn write(&mut self, address: usize, data: u8) -> Result<(), ChipError> {
         if address >= MEMORY_SIZE {
             return Err(ChipError::AddressOutOfBounds {
@@ -36,6 +37,7 @@ impl crate::Chip8 {
         Ok(())
     }
 
+    /// Read a byte of data from the address specified.
     pub fn read(&self, address: usize) -> Result<u8, ChipError> {
         if address >= MEMORY_SIZE {
             return Err(ChipError::AddressOutOfBounds {
@@ -47,6 +49,7 @@ impl crate::Chip8 {
         Ok(self.memory[address])
     }
 
+    /// Write an array of bytes to memory starting at the base address.
     pub fn load(&mut self, base_address: usize, data: &[u8]) -> Result<(), ChipError> {
         let end_address = base_address + data.len();
         if (end_address) >= MEMORY_SIZE {
@@ -61,6 +64,7 @@ impl crate::Chip8 {
         Ok(())
     }
 
+    /// Write an array of bytes to memory starting at the ROM base address.
     pub fn load_rom(&mut self, data: &[u8]) -> Result<(), ChipError> {
         self.rom = data.to_vec();
         self.load(self.config.rom_base_addr, data)?;
@@ -68,16 +72,19 @@ impl crate::Chip8 {
         Ok(())
     }
 
+    /// Write an array of bytes to memory starting at the font base address.
     pub fn load_font(&mut self, font: &[u8]) -> Result<(), ChipError> {
         self.load(FONT_BASE_ADDRESS, font)?;
 
         Ok(())
     }
 
+    /// Write the default font to memory.
     pub fn load_default_font(&mut self) {
         let _ = self.load_font(&FONT);
     }
 
+    /// Set all values in memory to zero, reload default font and last loaded ROM.
     pub fn reset_memory(&mut self) {
         self.memory = [0; MEMORY_SIZE];
         self.load_default_font();

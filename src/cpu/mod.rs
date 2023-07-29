@@ -8,6 +8,8 @@ use opcodes::Opcode;
 const NUM_REGISTERS: usize = 0x10;
 const STACK_SIZE: usize = 16;
 
+/// The CPU of the machine. In charge of interpreting all the commands from
+/// the loaded ROM.
 pub struct Cpu {
     // Registers
     pub v: [u8; NUM_REGISTERS],
@@ -21,6 +23,8 @@ pub struct Cpu {
 }
 
 impl Cpu {
+    /// Push to the stack. The stack has a limit of 16 and will return a [`ChipError::StackOverflow`]
+    /// error when attempting to push to a full stack.
     pub fn push(&mut self, value: u16) -> Result<(), ChipError> {
         if self.sp == (STACK_SIZE - 1) {
             return Err(ChipError::StackOverflow(self.stack.len()));
@@ -32,6 +36,8 @@ impl Cpu {
         Ok(())
     }
 
+    /// Pop from the stack. It will return a [`ChipError::StackUnderflow`] when attempting to pop
+    /// from an empty stack.
     pub fn pop(&mut self) -> Result<u16, ChipError> {
         if self.sp == 0 {
             return Err(ChipError::StackUnderflow());
@@ -43,6 +49,7 @@ impl Cpu {
         Ok(value)
     }
 
+    /// Performs a Fetch-Decode-Execute cycle.
     pub fn step(&mut self, memory: &mut [u8], screen: &mut Screen) -> Result<(), ChipError> {
         // Fetch
         let opcode_hex = self.fetch(memory)?;
@@ -74,6 +81,7 @@ impl Cpu {
         Ok(opcode)
     }
 
+    /// Set all registers, stack and timers to zero.
     pub fn reset(&mut self) {
         self.v = [0; NUM_REGISTERS];
         self.i = 0;
