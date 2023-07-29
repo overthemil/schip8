@@ -43,3 +43,7 @@ fn main() -> Result<()> {
 }
 ```
 
+# Features
+- [x] CHIP-8
+- [ ] Super-Chip
+- [ ] Better debugging tools
