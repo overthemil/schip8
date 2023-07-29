@@ -4,16 +4,16 @@ mod errors;
 mod memory;
 mod screen;
 
-pub use errors::ChipError;
 pub use config::Config;
 use cpu::Cpu;
+pub use errors::ChipError;
 use screen::Screen;
 
-const MEMORY_SIZE: usize = 4096; 
+const MEMORY_SIZE: usize = 4096;
 
 pub struct Chip8 {
     pub memory: [u8; MEMORY_SIZE],
-    pub screen: Screen,     
+    pub screen: Screen,
     pub config: Config,
     pub cpu: Cpu,
 }
@@ -25,7 +25,7 @@ impl Chip8 {
             ..Default::default()
         };
         c8.load_default_font();
-        c8.cpu.pc = c8.config.rom_base_addr; 
+        c8.cpu.pc = c8.config.rom_base_addr;
 
         c8
     }
@@ -40,7 +40,7 @@ impl Chip8 {
         for _ in 0..self.config.tick_rate {
             self.step()?;
         }
-        
+
         if self.cpu.timer_delay > 0 {
             self.cpu.timer_delay -= 1;
         }
@@ -61,7 +61,7 @@ impl Default for Chip8 {
             cpu: Cpu::default(),
         };
         c8.load_default_font();
-        c8.cpu.pc = c8.config.rom_base_addr; 
+        c8.cpu.pc = c8.config.rom_base_addr;
 
         c8
     }

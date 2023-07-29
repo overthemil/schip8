@@ -19,23 +19,29 @@ const FONT: [u8; 80] = [
     0xF0, 0x80, 0x80, 0x80, 0xF0, // C
     0xE0, 0x90, 0x90, 0x90, 0xE0, // D
     0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
-    0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+    0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
 impl crate::Chip8 {
-    pub fn write(&mut self, address: usize, data: u8,) -> Result<(), ChipError> {
+    pub fn write(&mut self, address: usize, data: u8) -> Result<(), ChipError> {
         if address >= MEMORY_SIZE {
-            return Err(ChipError::AddressOutOfBounds{address, limit: self.memory.len()});
+            return Err(ChipError::AddressOutOfBounds {
+                address,
+                limit: self.memory.len(),
+            });
         }
 
-       self.memory[address] = data;
+        self.memory[address] = data;
 
-       Ok(())
+        Ok(())
     }
 
     pub fn read(&self, address: usize) -> Result<u8, ChipError> {
         if address >= MEMORY_SIZE {
-            return Err(ChipError::AddressOutOfBounds{address, limit: self.memory.len()});
+            return Err(ChipError::AddressOutOfBounds {
+                address,
+                limit: self.memory.len(),
+            });
         }
 
         Ok(self.memory[address])
@@ -44,7 +50,10 @@ impl crate::Chip8 {
     pub fn load(&mut self, base_address: usize, data: &[u8]) -> Result<(), ChipError> {
         let end_address = base_address + data.len();
         if (end_address) >= MEMORY_SIZE {
-            return Err(ChipError::AddressOutOfBounds{address: end_address, limit: self.memory.len()});
+            return Err(ChipError::AddressOutOfBounds {
+                address: end_address,
+                limit: self.memory.len(),
+            });
         }
 
         self.memory[base_address..end_address].copy_from_slice(data);
@@ -59,7 +68,7 @@ impl crate::Chip8 {
     }
 
     pub fn load_font(&mut self, font: &[u8]) -> Result<(), ChipError> {
-        self.load(FONT_BASE_ADDRESS, font)?; 
+        self.load(FONT_BASE_ADDRESS, font)?;
 
         Ok(())
     }
@@ -85,10 +94,10 @@ mod tests {
         let mut c8 = Chip8::default();
 
         let _ = c8.write(1, 15);
-        assert_eq!(c8.memory[1], 15); 
+        assert_eq!(c8.memory[1], 15);
 
         let e = c8.write(123456, 2);
-        assert!(matches!(e, Err(ChipError::AddressOutOfBounds{..})));
+        assert!(matches!(e, Err(ChipError::AddressOutOfBounds { .. })));
     }
 
     #[test]
@@ -105,7 +114,7 @@ mod tests {
         assert_eq!(val, 0xFF);
 
         let e = c8.read(123456);
-        assert!(matches!(e, Err(ChipError::AddressOutOfBounds{..})));
+        assert!(matches!(e, Err(ChipError::AddressOutOfBounds { .. })));
     }
 
     #[test]
@@ -117,6 +126,6 @@ mod tests {
         assert_eq!(c8.memory[3], 4);
 
         let e = c8.load(4091, &[1, 2, 3, 4, 5]);
-        assert!(matches!(e, Err(ChipError::AddressOutOfBounds{..})));
+        assert!(matches!(e, Err(ChipError::AddressOutOfBounds { .. })));
     }
 }

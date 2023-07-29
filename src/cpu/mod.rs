@@ -2,8 +2,8 @@ mod opcodes;
 
 use crate::errors::ChipError;
 use crate::Screen;
-use opcodes::Opcode;
 use opcodes::execute;
+use opcodes::Opcode;
 
 const NUM_REGISTERS: usize = 0x10;
 const STACK_SIZE: usize = 16;
@@ -58,16 +58,19 @@ impl Cpu {
 
     fn fetch(&mut self, memory: &mut [u8]) -> Result<u16, ChipError> {
         if (self.pc + 1) >= memory.len() {
-            return Err(ChipError::AddressOutOfBounds{address: self.pc + 1, limit: memory.len()});
+            return Err(ChipError::AddressOutOfBounds {
+                address: self.pc + 1,
+                limit: memory.len(),
+            });
         }
 
         let hi = memory[self.pc] as u16;
-        let lo = memory[self.pc + 1] as u16; 
+        let lo = memory[self.pc + 1] as u16;
 
         // The CHIP-8 is big endian
         let opcode: u16 = (hi << 8) | lo;
         self.pc += 2;
-        
+
         Ok(opcode)
     }
 }
@@ -105,15 +108,15 @@ mod tests {
         assert_eq!(cpu.sp, 2);
 
         cpu.sp = 15;
-        let e = cpu.push(1); 
+        let e = cpu.push(1);
         assert!(matches!(e, Err(ChipError::StackOverflow(_))));
-    } 
+    }
 
     #[test]
     fn pop() {
         let mut cpu = Cpu::default();
 
-        let e = cpu.pop(); 
+        let e = cpu.pop();
         assert!(matches!(e, Err(ChipError::StackUnderflow())));
 
         cpu.push(1).unwrap();
@@ -130,7 +133,7 @@ mod tests {
         assert_eq!(val, 1);
         assert_eq!(cpu.sp, 0);
 
-        let e = cpu.pop(); 
+        let e = cpu.pop();
         assert!(matches!(e, Err(ChipError::StackUnderflow())));
     }
 }

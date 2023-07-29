@@ -10,7 +10,7 @@ pub struct Screen {
 impl Default for Screen {
     fn default() -> Self {
         Screen {
-            screen: vec!(false; CHIP8_SCREEN_WIDTH * CHIP8_SCREEN_HEIGHT),
+            screen: vec![false; CHIP8_SCREEN_WIDTH * CHIP8_SCREEN_HEIGHT],
             width: CHIP8_SCREEN_WIDTH,
             height: CHIP8_SCREEN_HEIGHT,
         }
@@ -47,9 +47,9 @@ impl Screen {
         for y in 0..self.height {
             for dy in 0..scale {
                 for x in 0..self.height {
-                   for dx in 0..scale {
+                    for dx in 0..scale {
                         buffer[x + dx][y + dy] = self.get_pixel(x, y);
-                   } 
+                    }
                 }
             }
         }
