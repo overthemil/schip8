@@ -1,5 +1,6 @@
 use crate::errors::ChipError;
 use crate::MEMORY_SIZE;
+use crate::Chip8;
 
 pub const FONT_BASE_ADDRESS: usize = 0x050;
 
@@ -22,7 +23,7 @@ const FONT: [u8; 80] = [
     0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 ];
 
-impl crate::Chip8 {
+impl Chip8 {
     /// Write a byte of data to the address specified.
     pub fn write(&mut self, address: usize, data: u8) -> Result<(), ChipError> {
         if address >= MEMORY_SIZE {
