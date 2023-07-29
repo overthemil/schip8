@@ -62,6 +62,7 @@ impl crate::Chip8 {
     }
 
     pub fn load_rom(&mut self, data: &[u8]) -> Result<(), ChipError> {
+        self.rom = data.to_vec();
         self.load(self.config.rom_base_addr, data)?;
 
         Ok(())
@@ -80,6 +81,8 @@ impl crate::Chip8 {
     pub fn reset_memory(&mut self) {
         self.memory = [0; MEMORY_SIZE];
         self.load_default_font();
+        let rom_data = self.rom.clone();
+        let _ = self.load(self.config.rom_base_addr, &rom_data);
     }
 }
 

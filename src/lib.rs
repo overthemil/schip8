@@ -16,6 +16,7 @@ pub struct Chip8 {
     pub screen: Screen,
     pub config: Config,
     pub cpu: Cpu,
+    rom: Vec<u8>,
 }
 
 impl Chip8 {
@@ -50,6 +51,21 @@ impl Chip8 {
 
         Ok(())
     }
+
+    pub fn reset(&mut self) {
+        self.screen.clear_screen();
+        self.reset_memory();
+        self.cpu.reset();
+        self.cpu.pc = self.config.rom_base_addr;
+    }
+
+    pub fn set_input(&mut self, keys_pressed: [bool; 16]) {
+        self.cpu.keypad = keys_pressed;
+    }
+
+    pub fn should_play_sound(&self) -> bool {
+        self.cpu.timer_sound > 0
+    }
 }
 
 impl Default for Chip8 {
@@ -59,6 +75,7 @@ impl Default for Chip8 {
             screen: Screen::default(),
             config: Config::default(),
             cpu: Cpu::default(),
+            rom: Vec::new(),
         };
         c8.load_default_font();
         c8.cpu.pc = c8.config.rom_base_addr;

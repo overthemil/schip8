@@ -73,6 +73,17 @@ impl Cpu {
 
         Ok(opcode)
     }
+
+    pub fn reset(&mut self) {
+        self.v = [0; NUM_REGISTERS];
+        self.i = 0;
+        self.pc = 0;
+        self.sp = 0;
+        self.timer_delay = 0;
+        self.timer_sound = 0;
+        self.stack = [0; STACK_SIZE];
+        self.keypad = [false; 16];
+    }
 }
 
 impl Default for Cpu {
